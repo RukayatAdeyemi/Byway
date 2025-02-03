@@ -1,9 +1,10 @@
-const moogoose = require('moogoose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+
 
 //creating how user information will be stored in the database
 
-const userSchema = new moogoose.Schema ({
+const userSchema = new mongoose.Schema ({
     firstname: {
         type: String,
         required: true
