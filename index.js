@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const authRoutes = require('./routes/auth');
 const errorHandler = require("./middleware/errorHandler");
-const { default: rateLimit } = require("express-rate-limit");
+const rateLimit  = require("express-rate-limit");
+const swaggerSetup = require("./config/swagger");
 
 
 // intilise express
@@ -26,6 +27,9 @@ app.use(cors());
  app.use('/api/auth', authRoutes);
  // use or read errorHandler middleware to handle errors
  app.use(errorHandler)
+
+ // Swagger documentation
+swaggerSetup(app);
 
 // connect to MongoDB server
  mongoose.connect(process.env.MONGODB_URL).then(()=>{
