@@ -6,9 +6,9 @@ const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0", 
     info: {
-      title: "backend_bypay",
+      title: "backend_byway",
       version: "1.0.0",
-      description: "API documentation for Bypay Backend Project",
+      description: "API documentation for Byway Backend Project",
       contact: {
         name: "Rukayat Adeyemi",
         email: "rukayatadeyemiabiodun@gmail.com",
