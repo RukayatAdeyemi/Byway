@@ -4,7 +4,7 @@ const swaggerUi = require("swagger-ui-express");
 // Swagger definition
 const swaggerOptions = {
   swaggerDefinition: {
-    openapi: "3.0.0", 
+    openapi: "3.0.0",
     info: {
       title: "backend_byway",
       version: "1.0.0",
