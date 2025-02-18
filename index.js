@@ -33,20 +33,13 @@ swaggerSetup(app);
 const uri = process.env.MONGODB_URL;
 
 // connect to MongoDB server
-mongoose
-  .connect(uri, {
-    serverSelectionTimeoutMS: 5000, // Timeout for server selection
-    connectTimeoutMS: 10000, // Timeout for initial connection
-  })
-  .then(() => {
+ mongoose.connect(process.env.MONGODB_URL).then(()=>{
     console.log("connected to MongoDB");
-  })
-  .catch((error) => {
-    console.log("Error", error);
-  });
-
-const port = process.env.PORT || 3001;
-
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+    }).catch(error => {console.log("Error", error)});
+   
+   
+    const port = process.env.PORT || 0;
+   
+    app.listen(port,() => {
+       console.log(`Server running on port ${port}`);
+    })

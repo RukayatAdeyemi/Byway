@@ -1,13 +1,13 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { signup, login } = require('../controllers/authController');
+const { signup, login } = require("../controllers/authController");
 
 // Declare the validation rules
 const {
-    signupValidationRules, validate, loginValidationRules,
+  signupValidationRules,
+  validate,
+  loginValidationRules,
 } = require("../Validators/authValidators");
-
-
 
 /**
  * @swagger
@@ -135,7 +135,7 @@ const {
  *         description: Server error
  */
 
-router.post('/signup', signupValidationRules, validate, signup);
-router.post('/login', loginValidationRules, validate, login);
+router.post("/signup", signupValidationRules, validate, signup);
+router.post("/login", loginValidationRules, validate, login);
 
 module.exports = router;
