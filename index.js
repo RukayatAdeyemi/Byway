@@ -10,7 +10,10 @@ const swaggerSetup = require("./config/swagger");
 // intilise express
 const app = express();
 // use or read Cors
-app.use(cors());
+app.use(cors({
+  origin: "*", // This allows all origins
+  credentials: true,
+}));
 // use or read Express
 app.use(express.json());
 
@@ -30,16 +33,34 @@ app.use(errorHandler);
 // Swagger documentation
 swaggerSetup(app);
 
-const uri = process.env.MONGODB_URL;
+// MongoDB connection URL
+const url = process.env.MONGODB_URL;
 
-// connect to MongoDB server
- mongoose.connect(process.env.MONGODB_URL).then(()=>{
-    console.log("connected to MongoDB");
-    }).catch(error => {console.log("Error", error)});
-   
-   
-    const port = process.env.PORT || 0;
-   
-    app.listen(port,() => {
-       console.log(`Server running on port ${port}`);
-    })
+const options = {
+  serverSelectionTimeoutMS: 30000,
+  connectTimeoutMS: 5000,
+};
+
+// Connect to MongoDB before starting the server
+const connectDB = async () => {
+  try {
+    await mongoose.connect(url, options);
+    console.log("Connected to MongoDB");
+  } catch (error) {
+    console.log("MongoDB Error:", error);
+    process.exit(1);
+  }
+};
+
+const PORT = process.env.PORT || 3000;
+
+
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+
+// Connect to database
+connectDB();
+
+// Export the app for Vercel
+module.exports = app;
