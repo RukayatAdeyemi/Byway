@@ -123,7 +123,6 @@ const courseSchema = new mongoose.Schema({
     ],
     requirements: [String],
     learningOutcomes: [String],
-    tags: [String],
     ratings: {
         average: {
             type: Number,

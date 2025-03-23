@@ -5,31 +5,48 @@ const bcrypt = require("bcrypt");
 //Signup function
 const signup = async (req, res) => {
   try {
-    const { firstname, lastname, username, email, password } = req.body;
+    const {
+      firstname,
+      lastname,
+      email,
+      username,
+      password,
+      role,
+      bio,
+      experience,
+      title,
+      socialLinks,
+      profileImage
+    } = req.body;
     //Check if existing user
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
     });
-    if (existingUser) {
-      if (existingUser.email === email) {
-        return res.status(400).json({ message: "Email already exists" });
-      }
-      //Username
-      if (existingUser.username === username) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-    }
-    // Create a new user
+    //If Existing User
+    if(existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: existingUser.username===username? "Username already exists" : "Email already exists",
+      })
+    };
+    // Create new User with Optional Fields
     const newUser = new User({
       firstname,
       lastname,
-      username,
+      username, 
       email,
       password,
+      // add optional fields
+      ...(role && {role}),
+      ...(bio && {bio}),
+      ...(title && {title}),
+      ...(experience && {experience}),
+      ...(socialLinks && {socialLinks}),
+      ...(profileImage && {profileImage}),
     });
     await newUser.save();
     res.status(201).json({
-      success: true,
+      success: truec,
       message: "User created successfully",
       user: {
         id: newUser._id,
@@ -37,54 +54,41 @@ const signup = async (req, res) => {
         lastname: newUser.lastname,
         username: newUser.username,
         email: newUser.email,
-      },
+        profileImage: newUser.profileImage,
+        role: newUser.role,
+        bio: newUser.bio,
+        title: newUser.title,
+        experience: newUser.experience,
+        socialLinks: newUser.socialLinks,
+      }
     });
   } catch (error) {
     console.log("Signup Error:", error);
-    res.status(500).json({ message: "Error signing up users" });
+    res.status(500).json({ 
+      success: false,
+      message: "Error signing up users",
+      error: error.message,
+    });
   }
 };
+
+
 
 //Operations for Login users
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    //find user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid Email or Password" });
+    const {username, email, password} = req.body;
+    if (!username && !email) {
+      return res.status(400).json({ 
+        success: false,
+        message: "Please provide a username or email" 
+      });
     }
-    // compare password with the one saved in database
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid Email or Password" });
-    }
-    //Generate token when user signin
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "2d",
-    });
-    res.json({
-      success: true,
-      message: "Login successful!",
-      token,
-      user: {
-        id: user._id,
-        firstname: user.firstname,
-        lastname: user.lastname,
-        username: user.username,
-        email: user.email,
-      },
-    });
   } catch (error) {
-    console.log("Login Error:", error);
-    res.status(500).json({ message: "Error occur while Logging in" }); //login error
+    
   }
-};
+}
 
 // Export both functions
 module.exports = { signup, login };
