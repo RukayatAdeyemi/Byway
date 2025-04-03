@@ -182,5 +182,88 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+//Update User Profile
+const updateProfile= async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { firstname, lastname, bio, title, experience, socialLinks } = req.body;
+    //Field to be updated
+    const updateData = {};
+    if (firstname) updateData.firstname = firstname;
+    if (lastname) updateData.lastname = lastname;
+    if (bio) updateData.bio = bio;
+    if (title) updateData.title = title;
+    if (experience) updateData.experience = experience;
+    if (socialLinks) updateData.socialLinks = socialLinks;
+    //Handle profile Image 
+    if (req.file) {
+      updateData.profileImage = `uploads/${req.file.filename}`;
+    };
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {$set: updateData},
+      {new: true}
+    ).select("_password");
+    if(!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      })
+    }
+    res.status(200).json({
+      success: true,
+      message:"Profile Updated Successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error Updating Profle",
+      error: error.message,
+    })
+  }
+};
+//Update Password
+const updatePassword = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { currentPassword, newPassword } = req.body;
+    // Validate Input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "Current Password and New Password are required",
+      });
+    }
+    const user = await User.findById(userId);
+    if (!user){
+      return res.status(404).json({
+        success: false,
+        message: "User Not Found",
+      });
+    }
+    // Check if entered current password is correct
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid Current Password",
+      });
+    }
+    // Update Password
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    })
+  } catch (error) {
+    res.status(500).json({
+      success:false,
+      message: "Error Updating Password",
+      error: error.message,
+    })
+  }
+}
 // Export both functions
-module.exports = { signup, login, getCurrentUser };
+module.exports = { signup, login, getCurrentUser, updateProfile, updatePassword };
