@@ -1,3 +1,5 @@
+const { JsonWebTokenError } = require("jsonwebtoken");
+
 const errorHandler = (err, req, res, next) => {
     console.error(err.stack); 
 
@@ -19,14 +21,35 @@ const errorHandler = (err, req, res, next) => {
             field: object.keys(err.keyValue)[0]
           });
     }
+    //Jwt Errors
+    if (err.name === "JsonWebTokenError"){
+        return res.status(401).json({
+            success: false,
+            message: "Invalid token",
+          });
+    };
+    if (err.name === "TokenExpiredError"){
+        return res.status(401).json({
+            success: false,
+            message: "Token Expired",
+          });
+    }
+    //Default to 500 server Error
+    return res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || "Server Error",
+        error: process.env.NODE_ENV === "development" ? err : {},
+      });
+    };
+
 
 
     // Default error message/ error code
-    const statusCode  = err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+    // const statusCode  = err.statusCode || 500;
+    // const message = err.message || "Internal Server Error";
 
     // Send error response
-    res.status(statusCode).json({ success: false, message});
-}
+    // res.status(statusCode).json({ success: false, message});
+
 
 module.exports = errorHandler;
