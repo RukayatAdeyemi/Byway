@@ -7,7 +7,7 @@ const {
   signupValidationRules,
   validate,
   loginValidationRules,
-} = require("../Validators/authValidators");
+} = require("..//validators/authValidators");
 
 /**
  * @swagger

@@ -96,6 +96,7 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
   });
   
   const Review = mongoose.model("Review", reviewSchema);
-
+  // Export the model for use in other files.
+  module.exports = Review;
 
 
