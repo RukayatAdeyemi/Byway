@@ -172,11 +172,9 @@ router.post("/login", loginValidationRules, validate, login);
 
 // Protected routes that requires authentication
 router.get("/profile", authMiddleware, getCurrentUser);
-router.get("/profile", authMiddleware, getCurrentUser);
 router.put(
   "/profile",
   authMiddleware,
-  upload.single("profileImage"),
   profileUpdateValidationRules,
   validate,
   updateProfile
