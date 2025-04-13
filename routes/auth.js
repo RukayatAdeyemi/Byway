@@ -1,13 +1,45 @@
 const express = require("express");
 const router = express.Router();
-const { signup, login } = require("../controllers/authController");
+const multer = require("multer");
+const path = require("path");
+const {signup, login, getCurrentUser, updateProfile, updatePassword} = require("../controllers/authController");
 
 // Declare the validation rules
 const {
   signupValidationRules,
   validate,
   loginValidationRules,
+  profileUpdateValidationRules,
+  passwordUpdateValidationRules,
 } = require("..//validators/authValidators");
+const authMiddleware= require("../middleware/authMiddleware");
+
+//Configure Multer for File Uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb){
+    cb(null, "uploads/profile-images/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, `user-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  //Accept only Images
+  if(file.mimetype.startsWith("image/")){
+    cb(null, true);
+  } else {
+      cb(new Error("Not an image!, Please upload onlu images"))
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 2, //limit to 2mb 
+  },
+  fileFilter: fileFilter,
+});
 
 /**
  * @swagger
@@ -137,5 +169,18 @@ const {
 
 router.post("/signup", signupValidationRules, validate, signup);
 router.post("/login", loginValidationRules, validate, login);
+
+// Protected routes that requires authentication
+router.get("/profile", authMiddleware, getCurrentUser);
+router.get("/profile", authMiddleware, getCurrentUser);
+router.put(
+  "/profile",
+  authMiddleware,
+  upload.single("profileImage"),
+  profileUpdateValidationRules,
+  validate,
+  updateProfile
+);
+
 
 module.exports = router;

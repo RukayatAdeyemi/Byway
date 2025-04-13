@@ -52,7 +52,7 @@ const signup = async (req, res) => {
     });
     await newUser.save();
     res.status(201).json({
-      success: truec,
+      success: true,
       message: "User created successfully",
       user: {
         id: newUser._id,
@@ -115,7 +115,7 @@ const login = async (req, res) => {
     // Generate JWT Token with additional Info
     const token = jwt.sign(
       {
-        userId: user_id,
+        userId: user._id,
         username: user.username,
         email: user.email,
         role: user.role, // check incase of error
@@ -206,7 +206,7 @@ const updateProfile= async (req, res) => {
       userId,
       {$set: updateData},
       {new: true}
-    ).select("_password");
+    ).select("-password");
     if(!updatedUser) {
       return res.status(404).json({
         success: false,
