@@ -5,7 +5,9 @@ const User = require("../models/User")
 const authMiddleware = async (req, res, next) => {
     try {
         // Get token from headers
-        const token = req.header.authorization?.split("")[1];
+        // const token = req.header.authorization?.split(" ")[1]; / ask in class
+        const authHeader = req.headers.authorization;
+        const token = authHeader?.split(" ")[1];
         //Check if token is provided
         if (!token){
             return res.status(401).json({
@@ -36,4 +38,4 @@ const authMiddleware = async (req, res, next) => {
     }
 };
 
-module.export = authMiddleware;
+module.exports = authMiddleware;

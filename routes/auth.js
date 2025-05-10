@@ -175,7 +175,6 @@ router.get("/profile", authMiddleware, getCurrentUser);
 router.put(
   "/profile",
   authMiddleware,
-  profileUpdateValidationRules,
   validate,
   updateProfile
 );

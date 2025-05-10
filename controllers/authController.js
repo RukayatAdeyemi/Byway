@@ -198,6 +198,9 @@ const updateProfile= async (req, res) => {
     if (title) updateData.title = title;
     if (experience) updateData.experience = experience;
     if (socialLinks) updateData.socialLinks = socialLinks;
+
+    // Stop users from updating email, username and role automatically
+
     //Handle profile Image 
     if (req.file) {
       updateData.profileImage = `uploads/${req.file.filename}`;
