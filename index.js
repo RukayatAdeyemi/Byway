@@ -17,12 +17,20 @@ app.use(cors({
 // use or read Express
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.json({
+   message: "Byway API is running!",
+    status: "active"
+  });
+}); 
+
 //limit repeated requests to public APIs or endpoints
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
   message: "Too many requests, please try again later.",
 });
+
 // apply rate limiting to auth routes
 app.use("/api/auth", authLimiter);
 // use or read authRoutes
@@ -33,7 +41,9 @@ app.use(errorHandler);
 // Swagger documentation
 swaggerSetup(app);
 
-// MongoDB connection URL
+console.log("MongoDB URL:", process.env.MONGODB_URL ? "Loaded" : "NOT LOADED");
+
+// MongoDB connection URL - using environment variable
 const url = process.env.MONGODB_URL;
 
 const options = {
@@ -54,10 +64,9 @@ const connectDB = async () => {
 
 const PORT = process.env.PORT || 3000;
 
-
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 // Connect to database
 connectDB();
