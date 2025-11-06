@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const {signup, login, getCurrentUser, updateProfile, updatePassword} = require("../controllers/authController");
+const {signup, login, getCurrentUser, updateProfile, updatePassword} = require("./../controllers/authController");
 
 // Declare the validation rules
 const {
