@@ -11,7 +11,7 @@ const {
   loginValidationRules,
   profileUpdateValidationRules,
   passwordUpdateValidationRules,
-} = require("../validators//authValidators");
+} = require("../validators/authValidators");
 const authMiddleware= require("../middleware/authMiddleware");
 
 //Configure Multer for File Uploads
