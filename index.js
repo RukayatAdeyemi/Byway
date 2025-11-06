@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path"); 
 const authRoutes = require("./routes/auth");
 const errorHandler = require("./middleware/errorHandler");
 const rateLimit = require("express-rate-limit");
@@ -16,6 +17,9 @@ app.use(cors({
 }));
 // use or read Express
 app.use(express.json());
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/", (req, res) => {
   res.json({
@@ -40,6 +44,11 @@ app.use(errorHandler);
 
 // Swagger documentation
 swaggerSetup(app);
+
+// Catch-all for React routing
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
+});
 
 console.log("MongoDB URL:", process.env.MONGODB_URL ? "Loaded" : "NOT LOADED");
 
@@ -71,5 +80,5 @@ app.listen(PORT, () => {
 // Connect to database
 connectDB();
 
-// Export the app for Vercel
+// Export the app
 module.exports = app;
